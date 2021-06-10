@@ -52,3 +52,19 @@ formElem.addEventListener('submit', (e) => {
     });
   });
 });
+
+const getStops = async (streetKey) => {
+  const streetUrl = `${baseUrl}stops.json?${apiKey}&street=${streetKey}`;
+  const response = await fetch(streetUrl);
+  const data = await response.json();
+  
+  return data.stops;
+}
+
+const getSched = async (stopKey) => {
+  const stopUrl = `${baseUrl}stops/schedule.json?${apiKey}&max-results-per-route=2`;
+  const response = await fetch(stopUrl);
+  const data = await response.json();
+  
+  return data;
+}
