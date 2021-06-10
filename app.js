@@ -20,3 +20,20 @@
   //   "type": "Street"
   // },
   // "query-time": "2021-06-10T11:30:43"
+
+
+const apiKey = 'api-key=BW4rOzRErQbKDPpVzhq6';
+const baseUrl = "https://api.winnipegtransit.com/v3/";
+  
+
+const getStreets = async (ask) => {
+  const apiUrl = `${baseUrl}streets.json?${apiKey}&name=${ask}&usage=long`;
+  const response = await fetch(apiUrl);
+  const data = await response.json();
+
+  return data;
+};
+
+const streetElem = document.querySelector('.streets');
+
+streetElem .addEventListener('submit',)
