@@ -36,6 +36,7 @@ const getStreetList = async (ask) => {
 
 const streetElem = document.querySelector('.streets');
 const formElem = document.forms[0];
+const schedElem = document.querySelector('tbody');
 
 formElem.addEventListener('submit', (e) => {
   e.preventDefault();
@@ -57,14 +58,71 @@ const getStops = async (streetKey) => {
   const streetUrl = `${baseUrl}stops.json?${apiKey}&street=${streetKey}`;
   const response = await fetch(streetUrl);
   const data = await response.json();
-  
+
   return data.stops;
 }
 
 const getSched = async (stopKey) => {
-  const stopUrl = `${baseUrl}stops/schedule.json?${apiKey}&max-results-per-route=2`;
+  const stopUrl = `${baseUrl}stops/${stopKey}/schedule.json?${apiKey}&max-results-per-route=2`;
   const response = await fetch(stopUrl);
   const data = await response.json();
-  
-  return data;
+
+  return data['stop-schedule'];
 }
+const createNextBus = (scheduleObj) => {
+
+  return {
+    street: 'portage avenue',
+    crossStreet: 'home Street',
+    streetDirection: 'Eastbound',
+    busNumber: 21,
+    arrTime: '2:00'
+  }
+}
+const schedRowElem = (nextSchedBus) => {
+  const {
+    street,
+    streetDirection,
+    crossStreet,
+    arrTime,
+    busNum
+  } = nextSchedBus;
+  return `<tr>
+  <td>${street}</td>
+  <td>${crossStreet}</td>
+  <td>${streetDirection}</td>
+  <td>${busNum}</td>
+  <td>${arrTime}</td>
+  </tr>`
+};
+
+streetElem.addEventListener('click', (e) => {
+  const streetKey = e.target.dataset.streetKey;
+  getStops(streetKey).then((stops) => {
+    stops.forEach((stop) => {
+      getSched(stop.key).then((schedule) => {
+        schedule['route-schedules'].forEach(schedStop => {
+        schedElem.innerHTML += schedRowElem({
+          street: schedule.stop.name,
+          crossStreet: schedule.stop['cross-street'].name,
+          streetDirection: schedule.stop.direction,
+          busNum: 78,
+          arrTime: '2021, 16:00 cst'//schedule[`stop-schedule`][`route-schedules`][0][`scheduled-stops`][0][`times`][`arrival`][`estimated`],
+         }) 
+        })
+        
+      });
+
+    });
+  });
+});
+
+
+
+// getSched(10783).then((schedule) => {
+//   schedule['route-schedules'][0]['scheduled-stops'].forEach((schedStop) => {
+//     schedElem.innerHTML += schedRowElem(createNextBus(schedule));
+
+//   });
+
+// });
